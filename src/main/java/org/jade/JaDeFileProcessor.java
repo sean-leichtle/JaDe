@@ -11,22 +11,22 @@ public class JaDeFileProcessor {
 
     private JaDeHash hasher;
     private Set<String> fileHashes;
-    private List<File> origin;
-    private File destination;
+    private List<File> source;
+    private File target;
 
-    public JaDeFileProcessor(List<File> origin, File destination) {
+    public JaDeFileProcessor(List<File> source, File target) {
         this.hasher = new JaDeHash();
         this.fileHashes = new HashSet<>();
-        this.destination = destination;
-        this.origin = origin;
+        this.target = target;
+        this.source = source;
     }
 
     public void processFiles() throws IOException {
-        for(File dir : this.origin) {
+        for(File dir : this.source) {
             for(File file : dir.listFiles()) {
                 String hash = hasher.getHashValue(file);
                 if(!this.fileHashes.contains(hash)) {
-                    Files.copy(file.toPath(), destination.toPath().resolve(file.toPath().getFileName()));
+                    Files.copy(file.toPath(), this.target.toPath().resolve(file.toPath().getFileName()));
                 }
                 this.fileHashes.add(hash);
             }
