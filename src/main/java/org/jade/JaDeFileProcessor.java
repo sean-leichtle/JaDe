@@ -17,8 +17,8 @@ public class JaDeFileProcessor {
     public JaDeFileProcessor(List<File> source, File target) {
         this.hasher = new JaDeHash();
         this.fileHashes = new HashSet<>();
-        this.target = target;
         this.source = source;
+        this.target = target;
     }
 
     public void processFiles() throws IOException {

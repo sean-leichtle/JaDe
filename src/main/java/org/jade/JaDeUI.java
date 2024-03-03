@@ -18,8 +18,9 @@ import javafx.stage.Stage;
 
 public class JaDeUI extends Application {
 
-    private File selectedDirectoryOne, selectedDirectoryTwo, destinationDirectory;
-    private List<File> directories = new ArrayList<>(2);
+    private File targetDirectory;
+    private TextField sourceFieldOne, sourceFieldTwo, targetField, directoryNameField;
+    final private List<File> directories = new ArrayList<>(2);
 
     public JaDeUI() { }
 
@@ -29,38 +30,38 @@ public class JaDeUI extends Application {
         primaryStage.setResizable(false);
 
         // Elements
-        TextField originFieldOne = new TextField();
-        originFieldOne.setPromptText("Use search to find origin directory or enter it manually here.");
-        Button originButtonOne = new Button("Search");
+        sourceFieldOne = new TextField();
+        sourceFieldOne.setPromptText("Use search to find origin directory or enter it manually here.");
+        Button sourceButtonOne = new Button("Search");
 
-        TextField originFieldTwo = new TextField();
-        originFieldTwo.setPromptText("Use search to find origin directory or enter it manually here.");
-        Button originButtonTwo = new Button("Search");
+        sourceFieldTwo = new TextField();
+        sourceFieldTwo.setPromptText("Use search to find origin directory or enter it manually here.");
+        Button sourceButtonTwo = new Button("Search");
 
-        TextField destinationField = new TextField();
-        destinationField.setPromptText("Use destination button to navigate to directory or enter it here.");
-        Button destinationButton = new Button("Destination");
+        targetField = new TextField();
+        targetField.setPromptText("Use destination button to navigate to directory or enter it here.");
+        Button targetButton = new Button("Destination");
 
-        TextField directoryNameField = new TextField();
+        directoryNameField = new TextField();
         directoryNameField.setPromptText("Please enter name of new directory which will be created within selected destination directory.");
         Button deduplicateButton = new Button("Deduplicate");
 
         // Style elements
-        originFieldOne.setPrefSize(525, 30);
-        originFieldTwo.setPrefSize(525, 30);
-        destinationField.setPrefSize(525, 30);
+        sourceFieldOne.setPrefSize(525, 30);
+        sourceFieldTwo.setPrefSize(525, 30);
+        targetField.setPrefSize(525, 30);
         directoryNameField.setPrefSize(525, 30);
 
         // Layout
         GridPane grid = new GridPane();
 
-        HBox originPaneOne = new HBox(originFieldOne, originButtonOne);
+        HBox originPaneOne = new HBox(sourceFieldOne, sourceButtonOne);
         originPaneOne.setSpacing(20);
 
-        HBox originPaneTwo = new HBox(originFieldTwo, originButtonTwo);
+        HBox originPaneTwo = new HBox(sourceFieldTwo, sourceButtonTwo);
         originPaneTwo.setSpacing(20);
 
-        HBox destinationPane = new HBox(destinationField, destinationButton);
+        HBox destinationPane = new HBox(targetField, targetButton);
         destinationPane.setSpacing(20);
 
         HBox createDirectoryPane = new HBox(directoryNameField, deduplicateButton);
@@ -77,52 +78,61 @@ public class JaDeUI extends Application {
         grid.setPadding(new Insets(25, 25, 25, 25));
 
         // Logic
-        originButtonOne.setOnAction(event -> {
-            DirectoryChooser directoryChooser = new DirectoryChooser();
-            this.selectedDirectoryOne = directoryChooser.showDialog(primaryStage);
-            if(this.selectedDirectoryOne != null) {
-                originFieldOne.setText(selectedDirectoryOne.getAbsolutePath());
-                directories.add(selectedDirectoryOne);
-            }
-        });
+        sourceButtonOne.setOnAction(event -> this.sourceButtonOneEvent(primaryStage));
 
-        originButtonTwo.setOnAction(event -> {
-            DirectoryChooser directoryChooser = new DirectoryChooser();
-            this.selectedDirectoryTwo = directoryChooser.showDialog(primaryStage);
-            if(this.selectedDirectoryTwo != null) {
-                originFieldTwo.setText(this.selectedDirectoryTwo.getAbsolutePath());
-                directories.add(selectedDirectoryTwo);
-            }
-        });
+        sourceButtonTwo.setOnAction(event -> this.sourceButtonTwoEvent(primaryStage));
 
-        destinationButton.setOnAction(event -> {
-            DirectoryChooser directoryChooser = new DirectoryChooser();
-            this.destinationDirectory = directoryChooser.showDialog(primaryStage);
-            if(this.destinationDirectory != null) {
-                destinationField.setText(this.destinationDirectory.getAbsolutePath());
-            }
-        });
+        targetButton.setOnAction(event -> this.targetButtonEvent(primaryStage));
 
-        deduplicateButton.setOnAction(event -> {
-            this.destinationDirectory = new File(destinationField.getText() + "/" + directoryNameField.getText());
-            if(!destinationDirectory.exists() && !directoryNameField.getText().isEmpty() && !destinationField.getText().isEmpty()) {
-                destinationDirectory.mkdir();
-                if(!this.directories.isEmpty()) {
-                    JaDeFileProcessor fileProcessor = new JaDeFileProcessor(this.directories, destinationDirectory);
-                    try {
-                        fileProcessor.processFiles();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                        throw new RuntimeException(e);
-                    }
-                }
-            }
-        });
+        deduplicateButton.setOnAction(event -> this.deduplicateButtonEvent());
 
-        Platform.runLater(originFieldOne::requestFocus);
+        Platform.runLater(sourceFieldOne::requestFocus);
 
         // Display
         primaryStage.setScene(new Scene(grid));
         primaryStage.show();
+    }
+
+    public void sourceButtonOneEvent(Stage primaryStage) {
+        DirectoryChooser directoryChooser = new DirectoryChooser();
+        File sourceDirectoryOne = directoryChooser.showDialog(primaryStage);
+        if(sourceDirectoryOne != null) {
+            sourceFieldOne.setText(sourceDirectoryOne.getAbsolutePath());
+            directories.add(sourceDirectoryOne);
+        }
+    }
+
+    public void sourceButtonTwoEvent(Stage primaryStage) {
+        DirectoryChooser directoryChooser = new DirectoryChooser();
+        File sourceDirectoryTwo = directoryChooser.showDialog(primaryStage);
+        if(sourceDirectoryTwo != null) {
+            sourceFieldTwo.setText(sourceDirectoryTwo.getAbsolutePath());
+            directories.add(sourceDirectoryTwo);
+        }
+    }
+
+    public void targetButtonEvent(Stage primaryStage) {
+        DirectoryChooser directoryChooser = new DirectoryChooser();
+        this.targetDirectory = directoryChooser.showDialog(primaryStage);
+        if(this.targetDirectory != null) {
+            targetField.setText(this.targetDirectory.getAbsolutePath());
+        }
+    }
+
+    public void deduplicateButtonEvent() {
+        this.targetDirectory = new File(targetField.getText() + "/" + directoryNameField.getText());
+        if(!targetDirectory.exists() && !directoryNameField.getText().isEmpty() && !targetField.getText().isEmpty()) {
+            if(!this.directories.isEmpty()) {
+                targetDirectory.mkdir();
+                JaDeFileProcessor fileProcessor = new JaDeFileProcessor(this.directories, targetDirectory);
+                try {
+                    fileProcessor.processFiles();
+                } catch (
+                        IOException e) {
+                    e.printStackTrace();
+                    throw new RuntimeException(e);
+                }
+            }
+        }
     }
 }
