@@ -31,16 +31,16 @@ public class JaDeUI extends Application {
 
         // Elements
         sourceFieldOne = new TextField();
-        sourceFieldOne.setPromptText("Use search to find origin directory or enter it manually here.");
-        Button sourceButtonOne = new Button("Search");
+        sourceFieldOne.setPromptText("Use search to find source directory.");
+        Button sourceButtonOne = new Button("Source");
 
         sourceFieldTwo = new TextField();
-        sourceFieldTwo.setPromptText("Use search to find origin directory or enter it manually here.");
-        Button sourceButtonTwo = new Button("Search");
+        sourceFieldTwo.setPromptText("Use search to find source directory.");
+        Button sourceButtonTwo = new Button("Source");
 
         targetField = new TextField();
-        targetField.setPromptText("Use destination button to navigate to directory or enter it here.");
-        Button targetButton = new Button("Destination");
+        targetField.setPromptText("Use destination button to navigate to target directory.");
+        Button targetButton = new Button("Target");
 
         directoryNameField = new TextField();
         directoryNameField.setPromptText("Please enter name of new directory which will be created within selected destination directory.");
