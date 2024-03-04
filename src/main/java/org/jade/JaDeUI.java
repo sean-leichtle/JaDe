@@ -31,15 +31,15 @@ public class JaDeUI extends Application {
 
         // Elements
         sourceFieldOne = new TextField();
-        sourceFieldOne.setPromptText("Use search to find source directory.");
+        sourceFieldOne.setPromptText("Use search button to find source directory or enter directory and press search.");
         Button sourceButtonOne = new Button("Source");
 
         sourceFieldTwo = new TextField();
-        sourceFieldTwo.setPromptText("Use search to find source directory.");
+        sourceFieldTwo.setPromptText("Use search button to find source directory or enter directory and press search.");
         Button sourceButtonTwo = new Button("Source");
 
         targetField = new TextField();
-        targetField.setPromptText("Use destination button to navigate to target directory.");
+        targetField.setPromptText("Use target button to navigate to target directory or enter directory and press target.");
         Button targetButton = new Button("Target");
 
         directoryNameField = new TextField();
@@ -78,9 +78,9 @@ public class JaDeUI extends Application {
         grid.setPadding(new Insets(25, 25, 25, 25));
 
         // Logic
-        sourceButtonOne.setOnAction(event -> this.sourceButtonOneEvent(primaryStage));
+        sourceButtonOne.setOnAction(event -> this.sourceButtonEvent(primaryStage, sourceFieldOne));
 
-        sourceButtonTwo.setOnAction(event -> this.sourceButtonTwoEvent(primaryStage));
+        sourceButtonTwo.setOnAction(event -> this.sourceButtonEvent(primaryStage, sourceFieldTwo));
 
         targetButton.setOnAction(event -> this.targetButtonEvent(primaryStage));
 
@@ -93,29 +93,25 @@ public class JaDeUI extends Application {
         primaryStage.show();
     }
 
-    public void sourceButtonOneEvent(Stage primaryStage) {
+    public void sourceButtonEvent(Stage primaryStage, TextField sourceField) {
         DirectoryChooser directoryChooser = new DirectoryChooser();
-        File sourceDirectoryOne = directoryChooser.showDialog(primaryStage);
-        if(sourceDirectoryOne != null) {
-            sourceFieldOne.setText(sourceDirectoryOne.getAbsolutePath());
-            directories.add(sourceDirectoryOne);
+        File sourceDirectoryOne;
+        if(sourceField.getText().isEmpty()) {
+            sourceDirectoryOne = directoryChooser.showDialog(primaryStage);
+            sourceField.setText(sourceDirectoryOne.getAbsolutePath());
+        } else {
+            sourceDirectoryOne = new File(sourceField.getText());
         }
-    }
-
-    public void sourceButtonTwoEvent(Stage primaryStage) {
-        DirectoryChooser directoryChooser = new DirectoryChooser();
-        File sourceDirectoryTwo = directoryChooser.showDialog(primaryStage);
-        if(sourceDirectoryTwo != null) {
-            sourceFieldTwo.setText(sourceDirectoryTwo.getAbsolutePath());
-            directories.add(sourceDirectoryTwo);
-        }
+        directories.add(sourceDirectoryOne);
     }
 
     public void targetButtonEvent(Stage primaryStage) {
         DirectoryChooser directoryChooser = new DirectoryChooser();
-        this.targetDirectory = directoryChooser.showDialog(primaryStage);
-        if(this.targetDirectory != null) {
+        if(this.targetField.getText().isEmpty()) {
+            this.targetDirectory = directoryChooser.showDialog(primaryStage);
             targetField.setText(this.targetDirectory.getAbsolutePath());
+        } else {
+            this.targetDirectory = new File(targetField.getText());
         }
     }
 
