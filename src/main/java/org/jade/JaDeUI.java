@@ -120,11 +120,10 @@ public class JaDeUI extends Application {
         if(!targetDirectory.exists() && !directoryNameField.getText().isEmpty() && !targetField.getText().isEmpty()) {
             if(!this.directories.isEmpty()) {
                 targetDirectory.mkdir();
-                JaDeFileProcessor fileProcessor = new JaDeFileProcessor(this.directories, targetDirectory);
+                JaDeFileProcessor fileProcessor = new JaDeFileProcessor(this.directories, this.targetDirectory);
                 try {
                     fileProcessor.processFiles();
-                } catch (
-                        IOException e) {
+                } catch (IOException e) {
                     e.printStackTrace();
                     throw new RuntimeException(e);
                 }
